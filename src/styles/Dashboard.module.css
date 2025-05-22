@@ -1,0 +1,494 @@
+.container {
+  min-height: 100vh;
+  padding: 0 1rem;
+  position: relative;
+}
+
+.main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2rem 0;
+}
+
+.loadingContainer {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.welcomeSection {
+  margin-bottom: 2.5rem;
+}
+
+.title {
+  font-size: 2.2rem;
+  margin-bottom: 0.5rem;
+  color: var(--text);
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  color: #6B7280;
+  margin-bottom: 2rem;
+}
+
+.summaryCards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.summaryCard {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.summaryCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.summaryIcon {
+  font-size: 2rem;
+  margin-right: 1rem;
+}
+
+.summaryInfo h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem;
+  color: var(--secondary);
+}
+
+.summaryInfo p {
+  margin: 0;
+  color: #6B7280;
+  font-size: 0.9rem;
+}
+
+.contentSection {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.tabs {
+  display: flex;
+  border-bottom: 1px solid var(--light-gray);
+}
+
+.tabButton {
+  padding: 1rem 1.5rem;
+  background: none;
+  border: none;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #6B7280;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+  border-bottom: 2px solid transparent;
+}
+
+.tabButton.active {
+  color: var(--secondary);
+  border-bottom-color: var(--secondary);
+}
+
+.tabContent {
+  padding: 2rem;
+}
+
+.tabHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.tabHeader h2 {
+  font-size: 1.5rem;
+  margin: 0;
+  color: var(--text);
+}
+
+.actionButton {
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.625rem 1.25rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.actionButton:hover {
+  background-color: #2ebb85;
+}
+
+.actionButtonSecondary {
+  background-color: transparent;
+  color: var(--secondary);
+  border: 1px solid var(--secondary);
+  border-radius: 4px;
+  padding: 0.625rem 1.25rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.actionButtonSecondary:hover {
+  background-color: var(--secondary);
+  color: white;
+}
+
+.billsList,
+.comparisonsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.billCard,
+.comparisonCard {
+  border: 1px solid var(--light-gray);
+  border-radius: 8px;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.billCard:hover,
+.comparisonCard:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.billHeader,
+.comparisonHeader {
+  background-color: #F9FAFB;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--light-gray);
+}
+
+.billType,
+.comparisonType {
+  text-transform: capitalize;
+  font-weight: 600;
+  color: var(--secondary);
+}
+
+.billProvider,
+.comparisonDate {
+  color: #6B7280;
+  font-size: 0.9rem;
+}
+
+.billDetails,
+.comparisonDetails {
+  padding: 1.25rem;
+}
+
+.billInfo {
+  margin-bottom: 1.25rem;
+}
+
+.billInfo p,
+.comparisonDetails p {
+  margin: 0.5rem 0;
+  color: #4B5563;
+  font-size: 0.95rem;
+}
+
+.billActions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.savingsBadge {
+  background-color: #ECFDF5;
+  color: #059669;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.processingBadge {
+  background-color: #EFF6FF;
+  color: #1E40AF;
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.viewButton {
+  background: none;
+  border: 1px solid var(--secondary);
+  color: var(--secondary);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+  text-decoration: none;
+}
+
+.viewButton:hover:not(.disabled) {
+  background-color: var(--secondary);
+  color: white;
+}
+
+.viewButton.disabled {
+  border-color: #D1D5DB;
+  color: #9CA3AF;
+  cursor: not-allowed;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: #6B7280;
+}
+
+.emptyState p {
+  margin-bottom: 1.5rem;
+  font-size: 1.1rem;
+}
+
+/* Overview tab specific styles */
+.overviewTab {
+  padding-bottom: 1rem;
+}
+
+.timeframeSelector {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.timeframeSelector label {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #4B5563;
+}
+
+.select {
+  padding: 0.5rem 0.875rem;
+  font-size: 0.95rem;
+  border-radius: 4px;
+  border: 1px solid var(--light-gray);
+  color: #4B5563;
+  background-color: white;
+}
+
+.chartTypeToggle {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.toggleButton {
+  background: none;
+  border: 1px solid var(--light-gray);
+  padding: 0.5rem 0.875rem;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.toggleButton.active {
+  background-color: var(--secondary);
+  color: white;
+  border-color: var(--secondary);
+}
+
+.sectionTitle {
+  font-size: 1.5rem;
+  margin: 0 0 1.5rem;
+  color: var(--text);
+}
+
+.actionsSection {
+  margin-top: 2rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--light-gray);
+}
+
+.actionsSection h3 {
+  font-size: 1.25rem;
+  margin: 0 0 1.25rem;
+  color: var(--text);
+}
+
+.actionButtons {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* Recent uploads */
+.recentUploads {
+  margin: 1.5rem 0;
+  padding: 1.25rem;
+  background-color: #F3F4F6;
+  border-radius: 8px;
+}
+
+.recentUploads h3 {
+  margin: 0 0 1rem;
+  font-size: 1.125rem;
+  color: var(--text);
+}
+
+.recentUploadsList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.recentUploadItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--light-gray);
+}
+
+.recentUploadItem:last-child {
+  border-bottom: none;
+}
+
+.uploadFileName {
+  font-size: 0.95rem;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.uploadStatus {
+  font-size: 0.85rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-weight: 500;
+}
+
+.uploadStatus.processing {
+  background-color: #EFF6FF;
+  color: #1E40AF;
+}
+
+.uploadStatus.analyzed {
+  background-color: #ECFDF5;
+  color: #059669;
+}
+
+/* Upload notification */
+.uploadNotification {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 100;
+  max-width: 300px;
+  animation: slideIn 0.3s ease;
+}
+
+.uploadNotificationContent {
+  background-color: #ECFDF5;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.uploadNotificationContent p {
+  margin: 0;
+  color: #059669;
+  font-weight: 500;
+}
+
+.closeNotification {
+  background: none;
+  border: none;
+  color: #059669;
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 0 0 1rem;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  .tabHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .billActions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .tabContent {
+    padding: 1.5rem;
+  }
+  
+  .tabs {
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  
+  .tabButton {
+    padding: 1rem;
+  }
+  
+  .timeframeSelector {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .select {
+    width: 100%;
+  }
+  
+  .uploadNotification {
+    left: 1.5rem;
+    right: 1.5rem;
+    max-width: none;
+  }
+}
