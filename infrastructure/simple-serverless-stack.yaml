@@ -1,0 +1,246 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Simple Serverless Irish Utility Bill Processing System'
+
+Parameters:
+  EnvironmentName:
+    Type: String
+    Default: production
+    Description: Environment name for resource naming
+
+Resources:
+  # S3 Bucket for storing utility bills
+  UtilityBillsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub 'irish-utility-bills-${EnvironmentName}-${AWS::AccountId}'
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+
+  # DynamoDB Table for processed bill data
+  BillDataTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub 'irish-utility-bills-${EnvironmentName}'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: userId
+          AttributeType: S
+        - AttributeName: billId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: userId
+          KeyType: HASH
+        - AttributeName: billId
+          KeyType: RANGE
+
+  # API Gateway
+  ApiGateway:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: !Sub 'irish-utility-api-${EnvironmentName}'
+      Description: 'API for Irish Utility Bill Processing System'
+      EndpointConfiguration:
+        Types: [REGIONAL]
+
+  # API Gateway Resource (catch-all for Next.js routes)
+  ApiResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref ApiGateway
+      ParentId: !GetAtt ApiGateway.RootResourceId
+      PathPart: '{proxy+}'
+
+  # API Gateway Method
+  ApiMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref ApiGateway
+      ResourceId: !Ref ApiResource
+      HttpMethod: ANY
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${NextJSFunction.Arn}/invocations'
+
+  # API Gateway Method for root
+  ApiMethodRoot:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref ApiGateway
+      ResourceId: !GetAtt ApiGateway.RootResourceId
+      HttpMethod: ANY
+      AuthorizationType: NONE
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub 'arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${NextJSFunction.Arn}/invocations'
+
+  # API Gateway Deployment
+  ApiDeployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn:
+      - ApiMethod
+      - ApiMethodRoot
+    Properties:
+      RestApiId: !Ref ApiGateway
+      StageName: !Ref EnvironmentName
+
+  # Lambda Execution Role for Next.js Function
+  NextJSLambdaRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub 'NextJSLambdaRole-${EnvironmentName}'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: NextJSLambdaPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - dynamodb:Query
+                  - dynamodb:GetItem
+                  - dynamodb:PutItem
+                  - dynamodb:UpdateItem
+                  - dynamodb:DeleteItem
+                  - dynamodb:Scan
+                Resource: !GetAtt BillDataTable.Arn
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:PutObject
+                  - s3:DeleteObject
+                Resource: !Sub '${UtilityBillsBucket.Arn}/*'
+              - Effect: Allow
+                Action:
+                  - s3:ListBucket
+                Resource: !GetAtt UtilityBillsBucket.Arn
+
+  # Next.js Lambda Function
+  NextJSFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub 'irish-utility-nextjs-${EnvironmentName}'
+      Runtime: nodejs20.x
+      Handler: index.handler
+      Role: !GetAtt NextJSLambdaRole.Arn
+      Code:
+        ZipFile: |
+          exports.handler = async (event) => {
+            console.log('Event:', JSON.stringify(event, null, 2));
+            return {
+              statusCode: 200,
+              headers: { 'Content-Type': 'text/html' },
+              body: `
+                <!DOCTYPE html>
+                <html>
+                  <head><title>Irish Utility Compare</title></head>
+                  <body>
+                    <h1>Irish Utility Compare</h1>
+                    <p>Serverless deployment successful!</p>
+                    <p>Path: ${event.path || '/'}</p>
+                    <p>Method: ${event.httpMethod}</p>
+                  </body>
+                </html>
+              `,
+            };
+          };
+      Timeout: 30
+      MemorySize: 1024
+      Environment:
+        Variables:
+          DYNAMODB_TABLE: !Ref BillDataTable
+          S3_BUCKET: !Ref UtilityBillsBucket
+          ENVIRONMENT: !Ref EnvironmentName
+
+  # Permission for API Gateway to invoke Lambda
+  NextJSLambdaPermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref NextJSFunction
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${ApiGateway}/*/*'
+
+  # Lambda Execution Role for Bill Processor
+  BillProcessorRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub 'BillProcessorRole-${EnvironmentName}'
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: BillProcessorPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - bedrock:InvokeModel
+                Resource: '*'
+              - Effect: Allow
+                Action:
+                  - dynamodb:PutItem
+                  - dynamodb:UpdateItem
+                Resource: !GetAtt BillDataTable.Arn
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                Resource: !Sub '${UtilityBillsBucket.Arn}/*'
+
+  # Bill Processor Lambda Function (reuse existing)
+  BillProcessorFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      FunctionName: !Sub 'irish-utility-bill-processor-${EnvironmentName}'
+      Runtime: nodejs20.x
+      Handler: index.handler
+      Role: !GetAtt BillProcessorRole.Arn
+      Code:
+        ZipFile: |
+          exports.handler = async (event) => {
+            console.log('Bill processor event:', JSON.stringify(event, null, 2));
+            return { statusCode: 200, body: 'Bill processor running' };
+          };
+      Timeout: 300
+      MemorySize: 1024
+      Environment:
+        Variables:
+          DYNAMODB_TABLE: !Ref BillDataTable
+          BEDROCK_REGION: !Ref AWS::Region
+
+Outputs:
+  ApiGatewayURL:
+    Description: 'Website URL'
+    Value: !Sub 'https://${ApiGateway}.execute-api.${AWS::Region}.amazonaws.com/${EnvironmentName}'
+    
+  S3BucketName:
+    Description: 'S3 Bucket for utility bills'
+    Value: !Ref UtilityBillsBucket
+    
+  DynamoDBTable:
+    Description: 'DynamoDB table for bill data'
+    Value: !Ref BillDataTable
+
+  NextJSFunctionName:
+    Description: 'Next.js Lambda function name'
+    Value: !Ref NextJSFunction
