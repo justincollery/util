@@ -1,0 +1,21 @@
+{
+  "name": "bill-processor-lambda",
+  "version": "1.0.0",
+  "description": "Lambda function to process utility bill PDFs",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "deploy": "zip -r bill-processor.zip . && aws lambda update-function-code --function-name bill-processor --zip-file fileb://bill-processor.zip"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.1691.0",
+    "pdf-parse": "^1.1.1"
+  },
+  "devDependencies": {
+    "jest": "^29.0.0",
+    "aws-sdk-mock": "^5.8.0"
+  },
+  "keywords": ["lambda", "pdf", "utility", "bills"],
+  "author": "",
+  "license": "ISC"
+}

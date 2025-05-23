@@ -1,0 +1,28 @@
+{
+  "name": "irish-utility-compare-debug",
+  "version": "1.0.0",
+  "description": "Debug version of Irish Utility Compare",
+  "main": "debug-server.js",
+  "scripts": {
+    "start": "node debug-server.js",
+    "debug": "node debug-server.js"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "dependencies": {
+    "@firebase/storage": "^0.11.2",
+    "aws-sdk": "^2.1525.0",
+    "chart.js": "^4.4.1",
+    "date-fns": "^3.0.6",
+    "firebase": "^10.8.0",
+    "formidable": "^3.5.4",
+    "next": "^14.0.0",
+    "next-auth": "^4.24.5",
+    "react": "^18.2.0",
+    "react-chartjs-2": "^5.2.0",
+    "react-dom": "^18.2.0",
+    "react-dropzone": "^14.2.3"
+  }
+}

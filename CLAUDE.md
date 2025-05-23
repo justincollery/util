@@ -8,6 +8,27 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - `npm run build` - Build production application  
 - `npm start` - Start production server
 
+## AWS Permissions Required
+
+If you encounter permission errors during deployment, ensure the IAM user has these policies:
+- `AWSLambdaFullAccess` - For Lambda function deployment
+- `AmazonDynamoDBFullAccess` - For database operations
+- `AmazonS3FullAccess` - For file storage and triggers
+- `AmazonBedrockFullAccess` - For AI model access
+- `AWSCloudFormationFullAccess` - For infrastructure deployment
+- `AWSAmplifyConsoleFullAccess` - For frontend deployment
+- `IAMFullAccess` - For creating service roles
+
+**Note**: For production, use more restrictive policies with specific resource ARNs.
+
+### Missing Permissions for Frontend Deployment:
+If deploying to **Elastic Beanstalk**, also add:
+- `AWSElasticBeanstalkFullAccess` - For creating EB applications and environments
+- `AmazonEC2FullAccess` - For EB to manage EC2 instances
+- `AmazonVPCFullAccess` - For VPC configuration
+
+If deploying to **Amplify** (alternative), the permissions above should be sufficient.
+
 ## Architecture Overview
 
 ### Authentication Flow
@@ -53,6 +74,7 @@ NEXT_PUBLIC_AWS_ACCESS_KEY_ID
 NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY
 NEXT_PUBLIC_AWS_REGION
 NEXT_PUBLIC_AWS_S3_BUCKET
+BILLS_TABLE_NAME
 ```
 
 ## Key Patterns
